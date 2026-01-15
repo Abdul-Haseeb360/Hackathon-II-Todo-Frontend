@@ -5,6 +5,7 @@ class ApiClient {
   private token: string | null;
 
   constructor() {
+    console.log("API_URL used: ", process.env.NEXT_PUBLIC_API_URL);
     this.baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
     this.token = null;
   }
