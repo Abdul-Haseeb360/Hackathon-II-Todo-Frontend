@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/form';
 import { apiClient } from '@/lib/api';
 import { TodoTask } from '@/types';
+import { toast } from 'sonner';
 
 const taskSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title must be less than 200 characters'),
@@ -63,6 +64,7 @@ export default function TaskForm({ task, onClose, onSuccess }: TaskFormProps) {
       }
 
       if (response.success) {
+        toast.success(isEditing ? 'Task updated successfully!' : 'Task created successfully!');
         onSuccess();
         onClose();
       } else {
@@ -70,12 +72,14 @@ export default function TaskForm({ task, onClose, onSuccess }: TaskFormProps) {
           type: 'manual',
           message: response.error || (isEditing ? 'Failed to update task' : 'Failed to create task'),
         });
+        toast.error(response.error || (isEditing ? 'Failed to update task' : 'Failed to create task'));
       }
-    } catch (error) {
+    } catch (error: any) {
       form.setError('root', {
         type: 'manual',
         message: 'An error occurred while saving the task',
       });
+      toast.error('An error occurred while saving the task');
     }
   };
 
@@ -87,9 +91,9 @@ export default function TaskForm({ task, onClose, onSuccess }: TaskFormProps) {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>Title *</FormLabel>
               <FormControl>
-                <Input placeholder="Task title" {...field} />
+                <Input placeholder="Enter task title" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -103,8 +107,9 @@ export default function TaskForm({ task, onClose, onSuccess }: TaskFormProps) {
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Task description"
+                  placeholder="Enter task description (optional)"
                   className="resize-none"
+                  rows={4}
                   {...field}
                 />
               </FormControl>
@@ -112,19 +117,19 @@ export default function TaskForm({ task, onClose, onSuccess }: TaskFormProps) {
             </FormItem>
           )}
         />
-        <div className="flex space-x-4">
-          <Button type="submit" disabled={form.formState.isSubmitting} className="cursor-pointer">
+        <div className="flex justify-end space-x-3 pt-2">
+          <Button type="button" variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={form.formState.isSubmitting}>
             {form.formState.isSubmitting
               ? (isEditing ? 'Updating...' : 'Creating...')
               : (isEditing ? 'Update Task' : 'Create Task')}
           </Button>
-          <Button type="button" variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
         </div>
         {form.formState.errors.root && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-            <span className="block sm:inline">{form.formState.errors.root.message}</span>
+          <div className="text-sm text-destructive">
+            {form.formState.errors.root.message}
           </div>
         )}
       </form>

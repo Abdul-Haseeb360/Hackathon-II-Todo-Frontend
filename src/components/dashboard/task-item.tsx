@@ -3,6 +3,15 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { apiClient } from '@/lib/api';
 import { TodoTask } from '@/types';
 import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { MoreHorizontal, Edit3, Trash2 } from 'lucide-react';
+import { format } from 'date-fns';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface TaskItemProps {
   task: TodoTask;
@@ -40,47 +49,75 @@ export default function TaskItem({ task, onEdit, onDelete, onToggle }: TaskItemP
   };
 
   return (
-    <div className={`border rounded-lg p-4 flex items-start space-x-4 ${task.completed ? 'bg-green-50' : 'bg-white'}`}>
-      <div className="pt-1">
+    <div
+      className={`rounded-xl border bg-card text-card-foreground shadow-sm p-5 transition-all hover:shadow-md ${
+        task.completed
+          ? 'bg-green-50/50 dark:bg-green-950/20 border-green-200 dark:border-green-900/50'
+          : 'bg-white dark:bg-gray-800/50 border-gray-200 dark:border-gray-700'
+      }`}
+    >
+      <div className="flex items-start gap-4">
         <Checkbox
           id={`task-${task.id}`}
           checked={task.completed}
           onCheckedChange={handleToggle}
           aria-label={`Toggle task completion for ${task.title}`}
-          className='cursor-pointer'
+          className="mt-1 cursor-pointer"
         />
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between">
-          <h3 className={`font-medium truncate ${task.completed ? 'line-through text-gray-500' : 'text-gray-900'}`}>
-            {task.title}
-          </h3>
-          <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onEdit(task)}
-              className='cursor-pointer'
-            >
-              Edit
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleDelete}
-              disabled={deleting}
-              className='cursor-pointer'
-            >
-              {deleting ? 'Deleting...' : 'Delete'}
-            </Button>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex-1 min-w-0">
+              <h3 className={`font-semibold text-base truncate ${
+                task.completed
+                  ? 'line-through text-muted-foreground'
+                  : 'text-foreground'
+              }`}>
+                {task.title}
+              </h3>
+
+              {task.description && (
+                <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                  {task.description}
+                </p>
+              )}
+
+              <div className="flex items-center gap-2 mt-3">
+                <Badge variant={task.completed ? "secondary" : "outline"} className="text-xs">
+                  {task.completed ? 'Completed' : 'Pending'}
+                </Badge>
+
+                {task.createdAt && (
+                  <span className="text-xs text-muted-foreground">
+                    {format(new Date(task.createdAt), 'MMM d, yyyy')}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => onEdit(task)}>
+                  <Edit3 className="h-4 w-4 mr-2" />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="text-red-600 focus:text-red-600"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  {deleting ? 'Deleting...' : 'Delete'}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
-        {task.description && (
-          <p className="text-sm text-gray-600 mt-1 truncate">{task.description}</p>
-        )}
-        <p className="text-xs text-gray-500 mt-1">
-          Created: {new Date(task.createdAt).toLocaleDateString()}
-        </p>
       </div>
     </div>
   );
