@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,6 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { Icons } from '@/components/icons';
 import useAuth from '@/hooks/use-auth';
 
 const signupSchema = z.object({
@@ -32,6 +34,8 @@ interface SignupFormProps {
 }
 
 export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
   const { register, loading, refreshAuth } = useAuth();
 
@@ -104,19 +108,25 @@ export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel className="text-gray-700 dark:text-gray-300">Name</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="John Doe"
-                  disabled={loading}
-                  {...field}
-                />
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Icons.user className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <Input
+                    placeholder="John Doe"
+                    disabled={loading}
+                    className="pl-10 h-12"
+                    {...field}
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -127,14 +137,20 @@ export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel className="text-gray-700 dark:text-gray-300">Email</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="name@example.com"
-                  type="email"
-                  disabled={loading}
-                  {...field}
-                />
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Icons.mail className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <Input
+                    placeholder="name@example.com"
+                    type="email"
+                    disabled={loading}
+                    className="pl-10 h-12"
+                    {...field}
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -145,13 +161,30 @@ export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel className="text-gray-700 dark:text-gray-300">Password</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
-                  disabled={loading}
-                  {...field}
-                />
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Icons.lock className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    disabled={loading}
+                    className="pl-10 pr-10 h-12"
+                    {...field}
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <Icons.eyeOff className="h-5 w-5 text-gray-400" />
+                    ) : (
+                      <Icons.eye className="h-5 w-5 text-gray-400" />
+                    )}
+                  </button>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -162,13 +195,30 @@ export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
+              <FormLabel className="text-gray-700 dark:text-gray-300">Confirm Password</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
-                  disabled={loading}
-                  {...field}
-                />
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Icons.lock className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <Input
+                    type={showConfirmPassword ? "text" : "password"}
+                    disabled={loading}
+                    className="pl-10 pr-10 h-12"
+                    {...field}
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <Icons.eyeOff className="h-5 w-5 text-gray-400" />
+                    ) : (
+                      <Icons.eye className="h-5 w-5 text-gray-400" />
+                    )}
+                  </button>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -179,8 +229,15 @@ export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
             <span className="block sm:inline">{form.formState.errors.root.message}</span>
           </div>
         )}
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Creating account...' : 'Sign Up'}
+        <Button type="submit" className="w-full h-12 text-base font-semibold cursor-pointer" disabled={loading}>
+          {loading ? (
+            <>
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+              Creating account...
+            </>
+          ) : (
+            'Sign Up'
+          )}
         </Button>
       </form>
     </Form>
