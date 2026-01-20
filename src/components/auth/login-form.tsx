@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,6 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { Icons } from '@/components/icons';
 import useAuth from '@/hooks/use-auth';
 
 const loginSchema = z.object({
@@ -27,6 +29,7 @@ interface LoginFormProps {
 }
 
 export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const { login, loading } = useAuth();
 
@@ -89,20 +92,26 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel className="text-gray-700 dark:text-gray-300">Email</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="name@example.com"
-                  type="email"
-                  disabled={loading}
-                  {...field}
-                />
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Icons.mail className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <Input
+                    placeholder="name@example.com"
+                    type="email"
+                    disabled={loading}
+                    className="pl-10 h-12"
+                    {...field}
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -113,13 +122,30 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel className="text-gray-700 dark:text-gray-300">Password</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
-                  disabled={loading}
-                  {...field}
-                />
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Icons.lock className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    disabled={loading}
+                    className="pl-10 pr-10 h-12"
+                    {...field}
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <Icons.eyeOff className="h-5 w-5 text-gray-400" />
+                    ) : (
+                      <Icons.eye className="h-5 w-5 text-gray-400" />
+                    )}
+                  </button>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -130,8 +156,15 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
             <span className="block sm:inline">{form.formState.errors.root.message}</span>
           </div>
         )}
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
+        <Button type="submit" className="w-full h-12 text-base font-semibold cursor-pointer" disabled={loading}>
+          {loading ? (
+            <>
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+              Logging in...
+            </>
+          ) : (
+            'Login'
+          )}
         </Button>
       </form>
     </Form>

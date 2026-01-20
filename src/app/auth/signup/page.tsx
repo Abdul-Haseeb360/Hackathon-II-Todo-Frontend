@@ -174,10 +174,11 @@ export default function SignupPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     className="pl-10 pr-10 h-12"
+                    placeholder='*****'
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
@@ -188,7 +189,7 @@ export default function SignupPage() {
                   </button>
                 </div>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-3 mb-5">
                 <Label htmlFor="confirmPassword" className="text-gray-700 dark:text-gray-300">
                   Confirm Password
                 </Label>
@@ -203,10 +204,11 @@ export default function SignupPage() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
                     className="pl-10 pr-10 h-12"
+                    placeholder='*****'
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? (
