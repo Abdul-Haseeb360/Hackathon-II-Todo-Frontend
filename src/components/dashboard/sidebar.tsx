@@ -154,7 +154,7 @@ export function Sidebar() {
 
             <Button
               variant="ghost"
-              className="w-full justify-start mt-2"
+              className="w-full justify-start mt-2 cursor-pointer"
               onClick={handleLogout}
             >
               <LogOut className="h-4 w-4 mr-2" />

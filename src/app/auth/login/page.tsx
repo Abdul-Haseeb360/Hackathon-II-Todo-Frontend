@@ -31,40 +31,12 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
 
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/signin`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
-
-      if (response.ok) { // Check only for 200 status
-        const data = await response.json();
-
-        // Save token to localStorage
-        localStorage.setItem('auth_token', data.token);
-
-        // Store session data
-        const sessionData = {
-          user: data.user,
-          token: data.token,
-          timestamp: Date.now(),
-        };
-        localStorage.setItem('auth_session', JSON.stringify(sessionData));
-
-        router.push('/dashboard');
-        router.refresh();
-      } else {
-        const errorData = await response.json();
-        setError(errorData.error || 'Login failed');
-      }
-    } catch (error) {
-      setError('An error occurred during login');
+    const result = await login(email, password);
+    if (!result.success) {
+      setError(result.error || 'Login failed');
+    } else {
+      router.push('/dashboard');
+      router.refresh();
     }
   };
 

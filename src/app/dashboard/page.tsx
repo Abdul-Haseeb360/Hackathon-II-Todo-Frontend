@@ -14,15 +14,6 @@ export default function DashboardPage() {
   const router = useRouter();
   const { loading: authLoading, isAuthenticated } = useAuth();
 
-  useEffect(() => {
-    // Redirect to login if not authenticated
-    if (!authLoading && !isAuthenticated) {
-      router.push('/auth/login');
-    } else if (isAuthenticated) {
-      fetchTasks();
-    }
-  }, [authLoading, isAuthenticated, router]);
-
   const fetchTasks = async () => {
     // Double-check authentication before fetching tasks
     if (!isAuthenticated) {
@@ -50,6 +41,15 @@ export default function DashboardPage() {
     }
   };
 
+  useEffect(() => {
+    // Redirect to login if not authenticated
+    if (!authLoading && !isAuthenticated) {
+      router.push('/auth/login');
+    } else if (isAuthenticated) {
+      fetchTasks();
+    }
+  }, [authLoading, isAuthenticated, router]);
+
   if (authLoading || loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -68,10 +68,6 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold text-gray-800">Your Tasks</h2>
-        <p className="text-gray-600">Manage your todo items</p>
-      </div>
       <TaskList tasks={tasks} onTaskUpdate={fetchTasks} onTaskDelete={fetchTasks} />
     </div>
   );

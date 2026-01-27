@@ -64,7 +64,7 @@ export default function TaskList({ tasks, onTaskUpdate, onTaskDelete }: TaskList
             />
           </div>
 
-          <Button onClick={handleCreateNew} className="w-full sm:w-auto">
+          <Button onClick={handleCreateNew} className="w-full sm:w-auto cursor-pointer">
             <Plus className="mr-2 h-4 w-4" />
             Add Task
           </Button>
