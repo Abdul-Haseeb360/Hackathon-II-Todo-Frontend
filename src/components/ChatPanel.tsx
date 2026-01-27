@@ -66,6 +66,16 @@ export default function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
         // Call the real API
         const response = await chatAPI.sendMessage(inputValue, undefined);
 
+        // Check for task-modifying tool calls to trigger state sync with dashboard
+        const hasTaskModifications = response.tool_calls?.some(call =>
+          ['add_task', 'complete_task', 'delete_task', 'update_task'].includes(call.name)
+        );
+
+        if (hasTaskModifications) {
+          console.log('Task modification detected, dispatching tasks-updated event');
+          window.dispatchEvent(new CustomEvent('tasks-updated'));
+        }
+
         console.log('Received response from API:', response);
 
         console.log('Processed chat response successfully');

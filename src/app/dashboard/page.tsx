@@ -50,6 +50,19 @@ export default function DashboardPage() {
     }
   }, [authLoading, isAuthenticated, router]);
 
+  // Listen for real-time task updates from the chatbot
+  useEffect(() => {
+    const handleTasksUpdated = () => {
+      console.log('Received tasks-updated event, refetching tasks');
+      fetchTasks();
+    };
+
+    window.addEventListener('tasks-updated', handleTasksUpdated);
+    return () => {
+      window.removeEventListener('tasks-updated', handleTasksUpdated);
+    };
+  }, [isAuthenticated, fetchTasks]);
+
   if (authLoading || loading) {
     return (
       <div className="flex justify-center items-center h-64">
