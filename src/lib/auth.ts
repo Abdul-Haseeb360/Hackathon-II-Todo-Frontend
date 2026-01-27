@@ -68,12 +68,12 @@ export const signIn = async (email: string, password: string) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
-      }
+      },
     );
 
     const result = await response.json();
 
-    if (result.success && result.token) {
+    if (response.ok && result.token) {
       // Store the session data
       storeSession(result.user, result.token);
       return { success: true, user: result.user };
@@ -89,7 +89,7 @@ export const signIn = async (email: string, password: string) => {
 export const signUp = async (
   email: string,
   password: string,
-  name?: string
+  name?: string,
 ) => {
   try {
     // Call the backend auth endpoint directly
@@ -101,12 +101,12 @@ export const signUp = async (
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password, name }),
-      }
+      },
     );
 
     const result = await response.json();
 
-    if (result.success && result.token) {
+    if (response.ok && result.token) {
       // Store the session data
       storeSession(result.user, result.token);
       return { success: true, user: result.user };

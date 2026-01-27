@@ -39,54 +39,12 @@ export default function SignupPage() {
       return;
     }
 
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/signup`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          password,
-          name,
-        }),
-      });
-
-      console.log("API response status:", response.status);
-
-      if (response.status === 200) {
-        const data = await response.json();
-        console.log("API response data:", data);
-
-        // Save token to localStorage
-        if (data && data.token) {
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('auth_token', data.token);
-
-            // Store session data
-            const sessionData = {
-              user: data.user,
-              token: data.token,
-              timestamp: Date.now(),
-            };
-            localStorage.setItem('auth_session', JSON.stringify(sessionData));
-          }
-        }
-
-        // Update auth state by calling refreshAuth from the useAuth hook
-        refreshAuth();
-
-        console.log("Success - token saved and redirecting", data.token);
-        console.log("Registration successful, redirecting to dashboard");
-        router.push('/dashboard');
-        router.refresh();
-      } else {
-        const errorData = await response.json();
-        setError(errorData.error || 'Registration failed');
-      }
-    } catch (err) {
-      setError('An error occurred during registration');
-      console.error('Registration error:', err);
+    const result = await register(email, password, name);
+    if (!result.success) {
+      setError(result.error || 'Registration failed');
+    } else {
+      router.push('/dashboard');
+      router.refresh();
     }
   };
 
